@@ -5,13 +5,19 @@ project(APP)
 set(ACERBA_URL "https://github.com/Acerba/Acerba.git" CACHE STRING "Acerba Git")
 set(APP_NAME "AcerbaProject" CACHE STRING "Name of application") 
 set(APP_VERSION_NUM "1.0.0" CACHE STRING "Version") 
+set(APP_AUTO_RESET FALSE CACHE BOOL "Reset Acerba") 
+
 
 
 if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/acerba)
     execute_process(COMMAND git submodule add ${ACERBA_URL} acerba WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
     execute_process(COMMAND git submodule update --init -- acerba WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 else()
-    execute_process(COMMAND git submodule update --merge -- acerba WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+  if(APP_AUTO_RESET)
+    execute_process(COMMAND git submodule foreach git checkout . WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  endif()
+    execute_process(COMMAND git submodule foreach git pull -f origin master WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
 add_subdirectory(acerba)
