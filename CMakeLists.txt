@@ -5,7 +5,7 @@ project(APP)
 set(ACERBA_LIBRARY_OUTPUT_DIRECTORY "${APP_BUILD_DIR}/Bin")
 
 set(ACERBA_URL "https://github.com/Acerba/Acerba.git" CACHE STRING "Acerba Git")
-set(APP_NAME "Acerba Project" CACHE STRING "Name of application") 
+set(APP_NAME "AcerbaProject" CACHE STRING "Name of application") 
 set(APP_VERSION_NUM "1.0.0" CACHE STRING "Version") 
 
 
