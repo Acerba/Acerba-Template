@@ -8,7 +8,6 @@ set(APP_VERSION_NUM "1.0.0" CACHE STRING "Version")
 set(APP_AUTO_RESET FALSE CACHE BOOL "Reset Acerba") 
 
 
-
 if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/acerba)
     execute_process(COMMAND git submodule add ${ACERBA_URL} acerba WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
     execute_process(COMMAND git submodule update --init -- acerba WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
@@ -29,3 +28,9 @@ set(LIBS acerba)
 separate_arguments(APP_NAME)
 BuildApplication(${APP_NAME})
 
+add_custom_command(TARGET ${APP_NAME} POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E remove_directory 
+  $<TARGET_FILE_DIR:${APP_NAME}>/assets
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+  ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:${APP_NAME}>/assets
+)
