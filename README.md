@@ -17,4 +17,4 @@ Downloads and updates Acerba project.
 
 * src
 * include
-* assets (WIP)
+* assets
