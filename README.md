@@ -2,6 +2,17 @@
 
 Downloads and updates Acerba project.
 
+## About
+
+Acerba Template uses  [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules) for handling Acerba repository 
+**if** git repository is initialized in your directory.
+
+So it doesn't need to add Acerba files for your version control other than:
+* .gitmodules
+* acerba
+    * git should show acerba as a "file" for this, you shouldn't see any other acerba           files inside acerba directory. 
+    * This is part of [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules)       feature.
+
 ## Requirements
 
 * CMake
