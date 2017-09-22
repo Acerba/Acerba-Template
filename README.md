@@ -23,6 +23,8 @@ So it doesn't need to add Acerba files for your version control other than:
 1. Download Acerba-Template as zip file and unzip it.
 2. Initialize git inside Acerba-Template directory (git init)
 3. Run CMake
+4. Run CMake Configure for updates 
+   * Enable **APP_AUTO_RESET** for forced update. (Sometimes required)
 
 ### (Gitless version)
 
