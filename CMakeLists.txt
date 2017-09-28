@@ -26,7 +26,12 @@ endif()
 add_subdirectory(acerba)
 
 file(GLOB SOURCES ${APP_SOURCE_DIR}/src/* ${APP_SOURCE_DIR}/include/*)
-set(INCLUDES ${APP_SOURCE_DIR}/include ${APP_SOURCE_DIR}/acerba/include)
+
+set(INCLUDES 
+    ${APP_SOURCE_DIR}/include ${APP_SOURCE_DIR}/acerba/include
+    ${ACERBA_INDLUCES}
+)
+
 set(LIBS acerba)
 
 separate_arguments(APP_NAME)
