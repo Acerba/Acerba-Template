@@ -9,19 +9,25 @@ set(APP_AUTO_RESET FALSE CACHE BOOL "Reset Acerba")
 set(APP_AUTO_UPDATE TRUE CACHE BOOL "Update Acerba") 
 set(APP_CLEAR_ASSETS FALSE CACHE BOOL "Clear Asset Folder") 
 
+set(PB_CXX_FLAGS "${PB_CXX_FLAGS} -std=c++14")
 
-if(APP_AUTO_UPDATE)
-    if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/acerba)
-        execute_process(COMMAND git submodule add ${ACERBA_URL} acerba WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-        execute_process(COMMAND git submodule update --init -- acerba WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-    else()
-      execute_process(COMMAND git submodule update --init -- acerba WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-      if(APP_AUTO_RESET)
-        execute_process(COMMAND git submodule foreach git checkout . WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-      endif()
-        execute_process(COMMAND git submodule foreach git pull -f origin master WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-    endif()
+if(NOT PB)
+	if(APP_AUTO_UPDATE)
+		if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/acerba)
+			execute_process(COMMAND git submodule add ${ACERBA_URL} acerba WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+			execute_process(COMMAND git submodule update --init -- acerba WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+		else()
+		  execute_process(COMMAND git submodule update --init -- acerba WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+		  if(APP_AUTO_RESET)
+			execute_process(COMMAND git submodule foreach git checkout . WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+		  endif()
+			execute_process(COMMAND git submodule foreach git pull -f origin master WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+		endif()
+	endif()
 endif()
+
+include(acerba/cmake/ProjectBuild.cmake)
+BuildBegin()
 
 add_subdirectory(acerba)
 
@@ -34,19 +40,41 @@ set(INCLUDES
 
 set(LIBS acerba)
 
+if(ANDROID)
+	set(APP_NAME main)
+endif()
+
 separate_arguments(APP_NAME)
 BuildApplication(${APP_NAME})
 
-if(APP_CLEAR_ASSETS)
+if(NOT ANDROID)
+	if(APP_CLEAR_ASSETS)
 
-    add_custom_command(TARGET ${APP_NAME} POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E remove_directory 
-      $<TARGET_FILE_DIR:${APP_NAME}>/assets
-    )
+		add_custom_command(TARGET ${APP_NAME} POST_BUILD
+		  COMMAND ${CMAKE_COMMAND} -E remove_directory 
+		  $<TARGET_FILE_DIR:${APP_NAME}>/assets
+		)
 
+	endif()
+
+	add_custom_command(TARGET ${APP_NAME} POST_BUILD
+	  COMMAND ${CMAKE_COMMAND} -E copy_directory
+	  ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:${APP_NAME}>/assets
+	)
+else()
+	
+	if(APP_CLEAR_ASSETS)
+
+		add_custom_command(TARGET ${APP_NAME} POST_BUILD
+		  COMMAND ${CMAKE_COMMAND} -E remove_directory 
+		  ${PB_BUILD_DIR}/android/assets
+		)
+
+	endif()
+
+	add_custom_command(TARGET ${APP_NAME} POST_BUILD
+	  COMMAND ${CMAKE_COMMAND} -E copy_directory
+	  ${CMAKE_SOURCE_DIR}/assets ${PB_BUILD_DIR}/android/assets
+	)
+	
 endif()
-
-add_custom_command(TARGET ${APP_NAME} POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy_directory
-  ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:${APP_NAME}>/assets
-)
