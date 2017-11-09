@@ -74,7 +74,7 @@ else()
 
 	add_custom_command(TARGET ${APP_NAME} POST_BUILD
 	  COMMAND ${CMAKE_COMMAND} -E copy_directory
-	  ${CMAKE_SOURCE_DIR}/assets ${PB_BUILD_DIR}/android/assets
+	  ${CMAKE_SOURCE_DIR}/assets ${PB_BUILD_DIR}/android/assets/assets
 	)
 	
 endif()
